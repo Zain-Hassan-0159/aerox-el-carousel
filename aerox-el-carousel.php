@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Aerox Carousel
  * Description:       Aerox Carousel Widget is created by Zain Hassan.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Zain Hassan

@@ -118,20 +118,6 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 		return [ 'Carousal', 'aerox carousel', 'custom', 'aerox' ];
 	}
 
-	public function get_all_custom_post_type(){
-		// this is all custom post types
-		$args       = array(
-			'public' => true,
-		);
-		$post_types = get_post_types( $args, 'objects' );
-		$posts = array();
-		foreach ($post_types as $post_type) {
-			$posts[$post_type->name] = $post_type->labels->singular_name;
-		}
-
-		return $posts;
-		// this is all custom post types
-	}
 
 	/**
 	 * Register company widget controls.
@@ -149,51 +135,85 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'post_type',
+		$repeater = new \Elementor\Repeater();
+
+		$repeater->add_control(
+			'list_title',
 			[
-				'label' => esc_html__( 'Post Type', 'aerox-el-carousel' ),
-				'type' => \Elementor\Controls_Manager::SELECT,
-				'options' => $this->get_all_custom_post_type()
+				'label' => esc_html__( 'Title', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'default' => esc_html__( 'List Title' , 'aerox-el-carousel' ),
+				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'list_content',
+			[
+				'label' => esc_html__( 'Content', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::WYSIWYG,
+				'default' => esc_html__( 'List Content' , 'aerox-el-carousel' ),
+				'show_label' => false,
+			]
+		);
+
+		$repeater->add_control(
+			'image',
+			[
+				'label' => esc_html__( 'Choose Image', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::MEDIA,
+				'default' => [
+					'url' => \Elementor\Utils::get_placeholder_image_src(),
+				],
 			]
 		);
 
 		$this->add_control(
-			'no_of_posts',
+			'list',
 			[
-				'label' => esc_html__( 'No of Posts', 'aerox-el-carousel' ),
-				'type' => \Elementor\Controls_Manager::NUMBER,
-				'min' => -1,
-				'step' => 1,
-				'default' => 6,
+				'label' => esc_html__( 'Steps List', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'default' => [
+					[
+						'list_title' => esc_html__( 'Stap 1: Oriëntatie', 'aerox-el-carousel' ),
+						'list_content' => esc_html__( 'In deze fase leren we u en uw wensen kennen. We analyseren uw persoonlijke stijl en bedrijfsbehoeften, zodat we een goed beeld krijgen van wat u zoekt in uw interieur.', 'aerox-el-carousel' ),
+						'image' => [
+							'url' => \Elementor\Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'list_title' => esc_html__( 'Stap 2: Vrijblijvend gesprek', 'aerox-el-carousel' ),
+						'list_content' => esc_html__( 'Na de oriëntatie plannen we een vrijblijvende afspraak met u in om uw wensen en behoeften verder te bespreken. Tijdens deze afspraak zullen we dieper ingaan op de details.', 'aerox-el-carousel' ),
+						'image' => [
+							'url' => \Elementor\Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'list_title' => esc_html__( 'Stap 3: Ontwerp op maat', 'aerox-el-carousel' ),
+						'list_content' => esc_html__( 'Onze professionele ontwerpers gaan aan de slag met het samenstellen van een uniek interieurontwerp dat perfect bij uw stijl en bedrijfsbehoeften past.', 'aerox-el-carousel' ),
+						'image' => [
+							'url' => \Elementor\Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'list_title' => esc_html__( 'Stap 4: Productie', 'aerox-el-carousel' ),
+						'list_content' => esc_html__( 'Zodra het ontwerp is goedgekeurd, starten we met de productie. Ons team van experts zorgt voor de projectstoffering, interieurbouw, afbouw, maatwerk en montage.', 'aerox-el-carousel' ),
+						'image' => [
+							'url' => \Elementor\Utils::get_placeholder_image_src(),
+						],
+					],
+					[
+						'list_title' => esc_html__( 'Stap 5: Productie', 'aerox-el-carousel' ),
+						'list_content' => esc_html__( 'Zodra het ontwerp is goedgekeurd, starten we met de productie. Ons team van experts zorgt voor de projectstoffering, interieurbouw, afbouw, maatwerk en montage.', 'aerox-el-carousel' ),
+						'image' => [
+							'url' => \Elementor\Utils::get_placeholder_image_src(),
+						],
+					]
+				],
+				'title_field' => '{{{ list_title }}}',
 			]
 		);
-
-		$this->add_control(
-			'order_by',
-			[
-				'label' => esc_html__( 'Order By', 'aerox-el-carousel' ),
-				'type' => \Elementor\Controls_Manager::SELECT,
-				'options' => [
-					'title' => 'Title',
-					'rand' => 'Random',
-					'date' => 'Date',
-				]
-			]
-		);
-
-		$this->add_control(
-			'order',
-			[
-				'label' => esc_html__( 'Order', 'aerox-el-carousel' ),
-				'type' => \Elementor\Controls_Manager::SELECT,
-				'options' => [
-					'ASC' => 'Ascending',
-					'DESC' => 'Descending',
-				]
-			]
-		);
-
 
 
 		$this->end_controls_section();
@@ -723,11 +743,118 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_content_carousel',
+			[
+				'label' => esc_html__( 'Content', 'aerox-el-carousel' ),
+				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'text_align_content_carousel',
+			[
+				'label' => esc_html__( 'Alignment', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'aerox-el-carousel' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'aerox-el-carousel' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'aerox-el-carousel' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => esc_html__( 'Justified', 'aerox-el-carousel' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'default' => 'center',
+				'selectors' => [
+					'{{WRAPPER}} .aerox-el-carousel p' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color_content_carousel',
+			[
+				'label' => esc_html__( 'Text Color', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .aerox-el-carousel p' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color_hover_content_carousel',
+			[
+				'label' => esc_html__( 'Text Color Hover', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .aerox-el-carousel .slick-slide:hover p' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Typography::get_type(),
+			[
+				'name' => 'text_typography_content_carousel',
+				'global' => [
+					'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_ACCENT,
+				],
+				'selector' => '{{WRAPPER}} .aerox-el-carousel p',
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'caption_shadow_content_carousel',
+				'selector' => '{{WRAPPER}} .aerox-el-carousel p',
+			]
+		);
+
+		$this->add_responsive_control(
+			'margin_content_carousel',
+			[
+				'label' => esc_html__( 'Margin', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .aerox-el-carousel p' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+	
+		$this->add_responsive_control(
+			'padding_content_carousel',
+			[
+				'label' => esc_html__( 'Padding', 'aerox-el-carousel' ),
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .aerox-el-carousel p' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 	}
 
 
 	/**
-	 * Render company widget output on the frontend.
+	 * Re24nder company widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -739,17 +866,6 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 		$str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$random = substr(str_shuffle($str_result), 0, 4);
 		$slick_id = 'slick-' . $random;
-
-
-
-		$the_query = new WP_Query( 
-			array( 
-			  'posts_per_page' => $settings['no_of_posts'], 
-			  'post_type' => $settings['post_type'],
-			  'orderby' => $settings['order_by'], 
-			  'order' => $settings['order'], 
-			) 
-		);
 
         ?>
 		<style>
@@ -773,7 +889,7 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 
 			.aerox-el-carousel.slick-slider .slick-track, .aerox-el-carousel.slick-slider .slick-list{
 				-webkit-transform: translate3d(0, 0, 0);
-				-moz-transform: translate3d(0, 0, 0);
+				24	-moz-transform: translate3d(0, 0, 0);
 				-ms-transform: translate3d(0, 0, 0);
 				-o-transform: translate3d(0, 0, 0);
 				transform: translate3d(0, 0, 0);
@@ -790,7 +906,6 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 				top: 35%;
 				left: 185px;
 				z-index: 999;
-				transform: rotate(180deg);
 			}
 
 			.aerox-el-carousel .slick-arrow{
@@ -844,20 +959,20 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 		<div style="position: relative;">
 			<div id="<?php echo $slick_id; ?>" class="aerox-el-carousel aerox-el-carousel-before">
 				<?php
-					if( $the_query->have_posts() ) :
-						while( $the_query->have_posts() ): $the_query->the_post();
-						?>
-						<?php $image = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'single-post-thumbnail' ); ?>
-						<a href="<?php echo get_the_permalink(); ?>">
+					if( $settings['list'] ) :
+						foreach (  $settings['list'] as $item ) :
+							?>
+						<?php $image = $item['image']['url']; ?>
+						<div>
 							<div class="top">
-								<img width="400" height="400" src="<?php echo $image[0]; ?>" alt="<?php echo get_the_title();  ?>">
+								<img width="400" height="400" src="<?php echo $image; ?>" alt="<?php echo $item['list_title'];  ?>">
 							</div>
-							<h2><?php echo get_the_title();  ?></h2>
-						</a>
+							<h2><?php echo $item['list_title'];  ?></h2>
+							<p><?php echo $item['list_content'];  ?></p>
+						</div>
 						<?php
 						
-					endwhile;
-						wp_reset_postdata();  
+						endforeach;
 					endif;
 				?>
 			</div>
@@ -879,8 +994,8 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 					pauseOnFocus: <?php echo $pauseOnFocus; ?>,
 					pauseOnHover: <?php echo $pauseOnHover; ?>,
 					autoplaySpeed: <?php echo $autoplaySpeed; ?>,
-					nextArrow: '<button type="button" class="slick-next"><svg xmlns="http://www.w3.org/2000/svg" width="22.5" height="15.243" viewBox="0 0 22.5 15.243"><path id="Icon_ionic-ios-arrow-round-forward" data-name="Icon ionic-ios-arrow-round-forward" d="M21.9,11.533a1,1,0,0,0-.008,1.406l4.646,4.654H8.861a.993.993,0,0,0,0,1.987H26.536L21.89,24.233a1.006,1.006,0,0,0,.008,1.406.989.989,0,0,0,1.4-.008l6.3-6.342h0a1.116,1.116,0,0,0,.206-.313.948.948,0,0,0,.076-.382,1,1,0,0,0-.283-.7l-6.3-6.342A.973.973,0,0,0,21.9,11.533Z" transform="translate(-7.625 -11.002)" fill="blue" stroke="blue" stroke-width="0.5"></path></svg></button>',
-					prevArrow: '<button type="button" class="slick-prev d-none"><svg xmlns="http://www.w3.org/2000/svg" width="22.5" height="15.243" viewBox="0 0 22.5 15.243"><path id="Icon_ionic-ios-arrow-round-forward" data-name="Icon ionic-ios-arrow-round-forward" d="M21.9,11.533a1,1,0,0,0-.008,1.406l4.646,4.654H8.861a.993.993,0,0,0,0,1.987H26.536L21.89,24.233a1.006,1.006,0,0,0,.008,1.406.989.989,0,0,0,1.4-.008l6.3-6.342h0a1.116,1.116,0,0,0,.206-.313.948.948,0,0,0,.076-.382,1,1,0,0,0-.283-.7l-6.3-6.342A.973.973,0,0,0,21.9,11.533Z" transform="translate(-7.625 -11.002)" fill="blue" stroke="blue" stroke-width="0.5"></path></svg></button>',
+					nextArrow: '<button type="button" class="slick-next"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></button>',
+					prevArrow: '<button type="button" class="slick-prev d-none"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></button>',
 					speed: <?php echo $settings['speed']; ?>,
 					responsive: [
 						{
@@ -953,7 +1068,7 @@ class Aerox_El_Carousel extends \Elementor\Widget_Base {
 						slider.style.transform = 'translate3d(' + newX + 'px, 0px, 0px)';
 						
 						observer.disconnect();
-					}, 50);  // Delay for 100 milliseconds
+					}, 1000);  // Delay for 100 milliseconds
 				}
 			}
 
