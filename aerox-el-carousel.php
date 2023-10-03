@@ -35,6 +35,9 @@ function register_aerox_custom_el_widgets( $widgets_manager ) {
 	require_once( __DIR__ . '/inc/widget.php' );
 	$widgets_manager->register( new \Aerox_El_Carousel );
 
+	require_once( __DIR__ . '/inc/reviews.php' );
+	$widgets_manager->register( new \Aerox_Reviews_Carousel );
+
 }
 add_action( 'elementor/widgets/register', 'register_aerox_custom_el_widgets' );
 
@@ -49,4 +52,3 @@ function aerox_register_dependencies_scripts() {
 
 }
 add_action( 'wp_enqueue_scripts', 'aerox_register_dependencies_scripts' );
-
